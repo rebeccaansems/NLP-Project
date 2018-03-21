@@ -2,16 +2,20 @@
 # and then exports to a csv the relevant information
 #
 # Author: Rebecca Ansems
-
-import glob, os, re, sys#, nltk
+import glob, os, re, sys, nltk, string
 from string import digits
-#from nltk.corpus import cmudict 
+from nltk.corpus import cmudict 
 
 reload(sys)
-sys.setdefaultencoding('utf8')
+sys.setdefaultencoding('utf8#')
 
-#def nsyl(word):
-#	return [len(list(y for y in x if y[-1].isdigit())) for x in d[word.lower()]] 
+phoneme_dict = dict(cmudict.entries())
+
+def syllables_in_word(word):
+    if phoneme_dict.has_key(word):   
+        return len( [ph for ph in phoneme_dict[word] if ph.strip(string.letters)] )
+    else:        
+        return 0   
 
 #open all text files in data folder
 path = './Data/'
@@ -51,10 +55,9 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 		info['NumberWords'] = len(contents.split())
 
 		#count number of syllables per word and add to running total to be stores
-		#d = cmudict.dict()
-		#numSyl = 0
-		#for word in contents.split():
-		#	numSyl += nsyl(word)
-		#info['NumberSyllables'] = numSyl
+		numSyl = 0
+		for word in contents.split():
+			numSyl += syllables_in_word(word)
+			info['NumberSyllables'] = numSyl
 
 		print info
