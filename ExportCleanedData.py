@@ -2,7 +2,7 @@
 # and then exports to a csv the relevant information
 #
 # Author: Rebecca Ansems
-import glob, os, re, sys, nltk, string
+import glob, os, re, sys, nltk, string, csv
 from string import digits
 from nltk.corpus import cmudict 
 
@@ -11,11 +11,14 @@ sys.setdefaultencoding('utf8#')
 
 phoneme_dict = dict(cmudict.entries())
 
+#NLTK get syllables in word
 def syllables_in_word(word):
-    if phoneme_dict.has_key(word):   
-        return len( [ph for ph in phoneme_dict[word] if ph.strip(string.letters)] )
-    else:        
-        return 0   
+	if phoneme_dict.has_key(word):   
+		return len( [ph for ph in phoneme_dict[word] if ph.strip(string.letters)] )
+	else:        
+		return 0   
+
+allData = []
 
 #open all text files in data folder
 path = './Data/'
@@ -30,10 +33,10 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 		#dictionary to store information about paper
 		info = {}
 
-		#INFORMATION CLEANING
+
+		####INFORMATION CLEANING
 
 		#convert to ascii and remove numbers
-		contents = contents.encode('ascii',errors='ignore')
 		contents = contents.translate(None, digits)
 
 		#make all lowercase
@@ -43,7 +46,14 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 		contents = contents.split('references', 1)[0]
 		contents = contents.split('works cited', 1)[0]
 
-		#INFORMATION GATHERING
+		#remove multiple periods: ..
+		consequitivedots = re.compile(r'\.{3,}')
+		contents = consequitivedots.sub('', contents)
+
+
+
+
+		####INFORMATION GATHERING
 
 		#see if text is english text
 		if 'english' in filename:
@@ -60,4 +70,18 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 			numSyl += syllables_in_word(word)
 			info['NumberSyllables'] = numSyl
 
+		#base number of sentences on the number of periods in text
+		numPeriods = contents.count('.')
+		info['NumberSentences'] = numPeriods
+
+		#add current information to dictionary of all data and print
 		print info
+		allData.append(info)
+		counter += 1
+
+
+#save all data to csv
+with open('Data.csv', 'wb') as csv_file:
+	writer = csv.writer(csv_file)
+	for value in allData:
+		writer.writerow([value,])
