@@ -19,7 +19,7 @@ def syllables_in_word(word):
 		return 0   
 
 allData = []
-path = './bada'
+path = './Data'
 
 print 'START CLEANING'
 
