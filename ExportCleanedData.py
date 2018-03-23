@@ -50,34 +50,37 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 		consequitivedots = re.compile(r'\.{3,}')
 		contents = consequitivedots.sub('', contents)
 
+		#do not include if text is too short (less than 200 characters)
+		if len(contents) > 199:
 
+			####INFORMATION GATHERING
 
+			#see if text is english text
+			if 'english' in filename:
+				info['IsNativeEnglish'] = True
+			else:
+				info['IsNativeEnglish'] = False
 
-		####INFORMATION GATHERING
+			#how many characters were in text
+			info['NumberCharacters'] = len(contents)
 
-		#see if text is english text
-		if 'english' in filename:
-			info['IsNativeEnglish'] = True
-		else:
-			info['IsNativeEnglish'] = False
+			#how many words were in text
+			info['NumberWords'] = len(contents.split())
 
-		#how many words were in text
-		info['NumberWords'] = len(contents.split())
+			#count number of syllables per word and add to running total to be stores
+			numSyl = 0
+			for word in contents.split():
+				numSyl += syllables_in_word(word)
+				info['NumberSyllables'] = numSyl
 
-		#count number of syllables per word and add to running total to be stores
-		numSyl = 0
-		for word in contents.split():
-			numSyl += syllables_in_word(word)
-			info['NumberSyllables'] = numSyl
+			#base number of sentences on the number of periods in text
+			numPeriods = contents.count('.')
+			info['NumberSentences'] = numPeriods
 
-		#base number of sentences on the number of periods in text
-		numPeriods = contents.count('.')
-		info['NumberSentences'] = numPeriods
-
-		#add current information to dictionary of all data and print
-		print info
-		allData.append(info)
-		counter += 1
+			#add current information to dictionary of all data and print
+			print info
+			allData.append(info)
+			counter += 1
 
 
 #save all data to csv
