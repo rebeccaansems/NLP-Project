@@ -18,7 +18,7 @@ def syllables_in_word(word):
 	else:        
 		return 0   
 
-allData = []
+all_data = []
 path = '.\\Data'
 
 print 'START CLEANING'
@@ -38,8 +38,11 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 		#dictionary to store information about paper
 		info = {}
 
-		#do not include if text is too short (less than 200 characters)
-		if len(contents) > 199:
+		#count number of periods
+		num_periods = contents.count('.')
+
+		#do not include if text is too short (less than 200 characters) or no periods
+		if len(contents) > 199 and num_periods != 0:
 
 			####INFORMATION GATHERING
 
@@ -61,19 +64,18 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 			info['NumberWords'] = number_words
 
 			#base number of sentences on the number of periods in text
-			numPeriods = contents.count('.')
-			info['NumberSentences'] = numPeriods
+			info['NumberSentences'] = num_periods
 
 			#count number of syllables per word and add to running total to be stores
-			numSyl = 0
+			num_syl = 0
 			for word in contents.split():
-				numSyl += syllables_in_word(word)
-				info['NumberSyllables'] = numSyl
+				num_syl += syllables_in_word(word)
+				info['NumberSyllables'] = num_syl
 
 			#calculate some averages
-			asw = float(numSyl)/float(number_words)
+			asw = float(num_syl)/float(number_words)
 			info['ASW'] = asw
-			asl = float(number_words)/float(numPeriods)
+			asl = float(number_words)/float(num_periods)
 			info['ASL'] = asl
 
 			#calculate reading scores
@@ -83,7 +85,7 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 			#add current information to dictionary of all data and print current 
 			print str(cleaned_data) + '/' + str(number_files)+" ",
 			cleaned_data += 1
-			allData.append(info)
+			all_data.append(info)
 
 
 print '\n\nSTART EXPORT'
@@ -94,8 +96,8 @@ with open('Data.csv', 'wb') as csv_file:
 	writer = csv.writer(csv_file)
 	writer.writerow(['FileName','IsNativeEnglish','NumberCharacters','NumberWords','NumberSentences',
 		'NumberSyllables','ASW','ASL','FRES','FKGL'])
-	for dic in allData:
+	for dic in all_data:
 			writer.writerow([dic['FileName'],dic['IsNativeEnglish'],dic['NumberCharacters'],dic['NumberWords'],
 				dic['NumberSentences'],dic['NumberSyllables'],dic['ASW'],dic['ASL'],dic['FRES'],dic['FKGL']])
-			print str(export_counter+1) + '/' + str(len(allData))+" ",
+			print str(export_counter+1) + '/' + str(len(all_data))+" ",
 			export_counter += 1
