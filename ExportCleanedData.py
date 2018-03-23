@@ -19,7 +19,7 @@ def syllables_in_word(word):
 		return 0   
 
 allData = []
-path = './Data'
+path = '.\\Data'
 
 print 'START CLEANING'
 
@@ -42,6 +42,9 @@ for filename in glob.glob(os.path.join(path, '*.txt')):
 		if len(contents) > 199:
 
 			####INFORMATION GATHERING
+
+			#save file name
+			info['FileName'] = filename
 
 			#see if text is english text
 			if 'english' in filename:
@@ -89,10 +92,10 @@ print '\n\nSTART EXPORT'
 export_counter = 0
 with open('Data.csv', 'wb') as csv_file:
 	writer = csv.writer(csv_file)
-	writer.writerow(['IsNativeEnglish','NumberCharacters','NumberWords','NumberSentences',
+	writer.writerow(['FileName','IsNativeEnglish','NumberCharacters','NumberWords','NumberSentences',
 		'NumberSyllables','ASW','ASL','FRES','FKGL'])
 	for dic in allData:
-			writer.writerow([dic['IsNativeEnglish'],dic['NumberCharacters'],dic['NumberWords'],
+			writer.writerow([dic['FileName'],dic['IsNativeEnglish'],dic['NumberCharacters'],dic['NumberWords'],
 				dic['NumberSentences'],dic['NumberSyllables'],dic['ASW'],dic['ASL'],dic['FRES'],dic['FKGL']])
 			print str(export_counter+1) + '/' + str(len(allData))+" ",
 			export_counter += 1
