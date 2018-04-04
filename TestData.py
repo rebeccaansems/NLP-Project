@@ -11,6 +11,7 @@ x = dataset.iloc[:, 8:10].values
 y = dataset.iloc[:, 1].values
 
 #spliting the dataset into training and test set
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
 clf = svm.SVC(kernel='rbf', C=1).fit(x_train, y_train)
 
