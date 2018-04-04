@@ -19,4 +19,4 @@ print "CV Score: ",
 print clf.score(x_test, y_test)
 
 print "\nClassification Report:"
-print classification_report(clf.predict(x), y)
+print classification_report(y, clf.predict(x))
